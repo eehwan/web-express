@@ -2,7 +2,7 @@ console.time('timer');
 
 const express = require('express');
 const app = express();
-const port = 3000;
+const port = 5006;
 
 const qs = require('querystring');
 const fs = require('fs');
@@ -26,6 +26,11 @@ app.get('*', function(req,res, next){
     next();
   })
 });
+
+//Router
+const topicRouter = require('./routes/topic');
+app.use('/topic', topicRouter);
+
 
 //home
 app.get('/', function(req, res){
@@ -151,12 +156,12 @@ app.use(function(err, req, res, next){
      history.go(-1);
      </script>`);
 });
-app.use(function(req, res, next){
-  res.send("<script>\
-     alert('page not found');\
-     history.go(-1);\
-     </script>");
-});
+// app.use(function(req, res, next){
+//   res.send("<script>\
+//      alert('page not found');\
+//      history.go(-1);\
+//      </script>");
+// });
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
 console.timeEnd('timer');
