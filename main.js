@@ -19,6 +19,9 @@ const bodyParser = require("body-parser");
 const compression = require("compression");
 app.use(bodyParser.urlencoded({ extended: false}));
 app.use(compression());
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
 //self-made middleware
 app.get('*', function(req,res, next){
   fs.readdir('./data', function(error, filelist){
@@ -26,10 +29,12 @@ app.get('*', function(req,res, next){
     next();
   })
 });
+const helmet = require('helmet');
+app.use(helmet());
 
 //Router
-const topicRouter = require('./routes/topic');
-app.use('/topic', topicRouter);
+const cookieRouter = require('./routes/cookie.js');
+app.use('/cookie', cookieRouter);
 
 
 //home
@@ -156,12 +161,15 @@ app.use(function(err, req, res, next){
      history.go(-1);
      </script>`);
 });
-// app.use(function(req, res, next){
-//   res.send("<script>\
-//      alert('page not found');\
-//      history.go(-1);\
-//      </script>");
-// });
+app.use(function(req, res, next){
+  res.send("<script>\
+     alert('unknown error');\
+     history.go(-1);\
+     </script>");
+});
 
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
-console.timeEnd('timer');
+app.listen(port, () => {
+  console.timeEnd('timer');
+  // console.log(`Example app listening at http://localhost:${port}`)
+  }
+);
