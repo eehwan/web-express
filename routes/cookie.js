@@ -11,20 +11,29 @@ const router = express.Router();
 //     res.next();
 //     }
 // });
-router.get('/',function(req,res){
-  if(req.cookies.first){
-    let _cookie = JSON.stringify(req.cookies)
-    res.send(_cookie)
+router.get('/',function(req, res, next){
+  if(req.cookies == undefined|| null|| ""|| (req.cookies != null && typeof req.cookies == "object" && !Object.keys(req.cookies).length)){
+    res.cookie('first', "1", {maxAge: 30000});
+    res.cookie('time', new Date(), {maxAge: 30000});
+    res.send('Hello, Cookie !!<br>\
+    setting...');
   }
   else{
-    res.cookie('first', "1", {maxAge: 30000});
-    res.send('Hello, Cookie !!');
+    res.send(`Cookie <br>\
+      ${Object.keys(req.cookies)}<br>\
+      ${JSON.stringify(req.cookies)}`);
   }
 })
 
 router.use(function(err, req, res, next){
   res.send(`<script>
      alert("${err.stack}");
+     history.go(-1);
+     </script>`);
+});
+router.use(function(req, res){
+  res.send(`<script>
+     alert("Unknown Error");
      history.go(-1);
      </script>`);
 });
